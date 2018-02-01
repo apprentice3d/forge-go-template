@@ -50,3 +50,25 @@ type CreateBucketResponse struct {
 	} `json:"permissions"`
 	PolicyKey string `json:"policyKey"`
 }
+
+
+type TranslationStatusResponse struct {
+	Type string		`json:"type"`
+	Status string	`json:"status"`
+	Progress string	`json:"progress"`
+	Region string	`json:"region"`
+	URN string		`json:"urn"`
+	Version string	`json:"version"`
+}
+
+
+
+/*
+"type": "manifest",
+    "hasThumbnail": "true",
+    "status": "success",
+    "progress": "complete",
+    "region": "US",
+    "urn": "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6c29tZV90ZW1wX2J1Y2tldC9naXJvX3dhdGNoLmYzZA",
+    "version": "1.0",
+ */
