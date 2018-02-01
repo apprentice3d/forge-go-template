@@ -9,8 +9,6 @@ import (
 
 var currentURN string
 
-
-
 func (service ForgeServices) getToken(writer http.ResponseWriter, request *http.Request) {
 
 	bearer, err := service.oauth.Authenticate("viewables:read")
@@ -24,18 +22,14 @@ func (service ForgeServices) getToken(writer http.ResponseWriter, request *http.
 	encoder.Encode(bearer)
 }
 
-
 func (service ForgeServices) getURN(writer http.ResponseWriter, request *http.Request) {
-
-	//TODO: change this to dynamic URN
-	//urn := "urn:dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6c29tZV90ZW1wX2J1Y2tldC9naXJvX3dhdGNoLmYzZA"
 
 	log.Printf("Received an URN request. Returning %s\n", currentURN)
 	writer.WriteHeader(http.StatusOK)
 	encoder := json.NewEncoder(writer)
-	encoder.Encode(struct{
+	encoder.Encode(struct {
 		URN string `json:"urn"`
-	}{currentURN})
+	}{URN: currentURN})
 }
 
 func (service *ForgeServices) uploadFiles(writer http.ResponseWriter, request *http.Request) {
@@ -66,22 +60,22 @@ func (service *ForgeServices) uploadFiles(writer http.ResponseWriter, request *h
 		return
 	}
 
-
 	urn, err := UploadAndConvert(filename, data, bearer.AccessToken)
 
-	log.Printf("Translation was successful. Got URN: %s\n", urn)
 	if err != nil {
+		log.Printf("UPLOAD_N_CONVERT failed with error: %s\n", err)
 		writer.WriteHeader(http.StatusInternalServerError);
 		writer.Write([]byte(err.Error()))
 		return
 	}
+	log.Printf("Translation was successful. Got URN: %s\n", urn)
 
 	currentURN = urn
 	log.Printf("Setting current URN to: %s\n", currentURN)
 
 	writer.WriteHeader(http.StatusOK)
 	encoder := json.NewEncoder(writer)
-	encoder.Encode(struct{
+	encoder.Encode(struct {
 		URN string `json:"urn"`
-	}{urn})
+	}{URN: urn})
 }
