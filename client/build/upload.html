@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html class="no-js" lang="">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Forge Template - upload</title>
+
+    <!-- Common packages: JQuery & Bootstrap -->
+    <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon"/>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/main.css">
+
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <!-- The Viewer CSS -->
+    <link rel="stylesheet" href="https://developer.api.autodesk.com/modelderivative/v2/viewers/style.min.css?v=v3.3.*"
+          type="text/css">
+
+    <!-- Viewer production -->
+    <script src="https://developer.api.autodesk.com/modelderivative/v2/viewers/three.min.js?v=v3.3.*"></script>
+    <script src="https://developer.api.autodesk.com/modelderivative/v2/viewers/viewer3D.min.js?v=v3.3.*"></script>
+
+
+
+
+</head>
+
+<body>
+
+<!--NavBar-->
+<nav class="navbar navbar-inverse navbar-fixed-top" id="my-navbar">
+    <div class="container">
+        <div class="collapse navbar-collapse" id="navbar-collapse">
+            \
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="/">Model Viewer</a>
+                </li>
+                <li>
+                    <a href="/upload.html"><strong>Model Uploader</strong></a>
+                </li>
+
+
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="https://developer.autodesk.com">Forge Developer Docs</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!--End Container-->
+</nav>
+<!--End Navbar-->
+
+<div class="container">
+    <div class="panel panel-default">
+        <div class="panel-heading"><div id="status"><strong>Upload File</strong> <small>to be prepared for viewer</small></div></div>
+        <div class="panel-body">
+
+            <!-- Drop Zone -->
+            <div class="upload-drop-zone" id="drop-zone">
+                Just drag and drop a model here
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /container -->
+
+<footer class="text-center">
+    <p>&copy; Autodesk Forge 2017</p>
+</footer>
+
+</body>
+
+<!-- The Upload JS -->
+<script src="/js/upload.js"></script>
+
+</html>

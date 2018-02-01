@@ -1,0 +1,67 @@
+/* ==========================================================================
+   Author's custom styles
+   ========================================================================== */
+
+body {
+  padding-top: 50px;
+  padding-bottom: 20px;
+  margin: 0;
+}
+
+/*#viewerDiv {*/
+  /*height: 680px; */
+  /*width: 860px; */
+  /*margin-top: 50px;*/
+  /*overflow: hidden; */
+  /*position: relative;*/
+/*}*/
+
+#viewerDiv {
+    height: 80%;
+    width: 80%;
+    margin-top: 50px;
+    overflow: hidden;
+    position: absolute;
+    left: 10%;
+    right: 10%;
+}
+
+footer {
+    padding-top: 50px;
+}
+
+section {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.container {
+  padding-left: 10px;
+    padding-top: 10px;
+}
+
+h4 {
+  color: white;
+}
+
+
+/* layout.css Style */
+.upload-drop-zone {
+    height: 200px;
+    border-width: 2px;
+    margin-bottom: 20px;
+}
+
+/* skin.css Style*/
+.upload-drop-zone {
+    color: #ccc;
+    border-style: dashed;
+    border-color: #ccc;
+    line-height: 200px;
+    text-align: center
+}
+.upload-drop-zone.drop {
+    color: #222;
+    border-color: #222;
+}
+
