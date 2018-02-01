@@ -33,6 +33,21 @@ func UploadAndConvert(filename string, data []byte, token string) (urn string, e
 	log.Printf("Request object '%s' to be translated into SVF\n", objectId)
 	urn, err = TranslateSourceToSVF(objectId, token)
 
+
+	//Checking the translation progress but not more than 360 times with interval of 10 sec => approx 1 hour
+	counter := 359
+	for {
+		progress, err := CheckTranslationProgress(urn, token)
+		if err != nil || progress == "complete" || counter < 0 {
+			return urn, err
+		}
+		log.Printf("Translation for URN=%s not yet complete. [Will retry in 10 sec]", urn)
+		time.Sleep(10*time.Second)
+		counter -= 1
+	}
+
+
+
 	return
 }
 
@@ -131,7 +146,7 @@ func UploadDataIntoBucket(filename string, data []byte, bucketKey string, token 
 	if res.StatusCode != http.StatusOK {
 		data, _ := ioutil.ReadAll(res.Body)
 
-		return "", errors.New("Fail, received status code " + strconv.Itoa(res.StatusCode) + " ==> " + string(data))
+		return "", errors.New("Could not upload file: " + strconv.Itoa(res.StatusCode) + " ==> " + string(data))
 	}
 
 	decoder := json.NewDecoder(res.Body)
@@ -197,3 +212,51 @@ func CreateTransientBucket(bucketName string, token string) (bucketKey string, e
 	return
 }
 
+
+
+
+func CheckTranslationProgress(urn string, token string) (progress string, err error){
+
+	url := "https://developer.api.autodesk.com/modelderivative/v2/designdata/" +
+		urn + "/manifest"
+
+	req, err := http.NewRequest("GET",
+		url,
+		nil)
+
+	if err != nil {
+
+		return
+	}
+
+	req.Header.Add("Authorization", "Bearer "+token)
+
+	res, err := http.DefaultClient.Do(req)
+
+	defer res.Body.Close()
+	if err != nil {
+
+		return
+	}
+
+	if res.StatusCode != http.StatusOK {
+		data, _ := ioutil.ReadAll(res.Body)
+
+		return "", errors.New(strconv.Itoa(res.StatusCode) + " ==> " + string(data))
+	}
+
+	decoder := json.NewDecoder(res.Body)
+	var response TranslationStatusResponse
+	err = decoder.Decode(&response)
+
+	if err != nil {
+		return "",errors.New("Could not unmarshal translation progress response: " + err.Error())
+	}
+
+	progress = response.Progress
+	log.Printf("Checked translation status for URN=%s ==> %s\n",
+		urn, progress)
+	return
+
+
+}
