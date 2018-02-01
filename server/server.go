@@ -39,6 +39,11 @@ func StartServer(port string) {
 func setupForgeOAuth() oauth.AuthApi {
 	clientID := os.Getenv("FORGE_CLIENT_ID")
 	clientSecret := os.Getenv("FORGE_CLIENT_SECRET")
+
+	if len(clientID) == 0 || len(clientSecret) == 0 {
+		log.Fatal("The FORGE_CLIENT_ID and FORGE_CLIENT_SECRET env vars are not set. \nExiting ...")
+	}
+	
 	log.Printf("Starting app with FORGE_CLIENT_ID = %s\n", clientID)
 	return oauth.NewTwoLeggedClient(clientID, clientSecret)
 }
