@@ -26,8 +26,10 @@ function getRecentURN() {
     xmlHttp.open("GET", urn_fetcher, false);
     xmlHttp.send(null);
     var data = JSON.parse(xmlHttp.responseText);
-    console.log("Received from server the following urn: " + data["urn"]);
-    return "urn:" + data["urn"];
+    var urn = data["urn"]
+    console.log("Received from server the following urn: " + urn + "of length " + urn.length);
+    if ( urn.length === 0) {window.location.replace('/upload.html');}
+    return "urn:" + urn;
 }
 
 
