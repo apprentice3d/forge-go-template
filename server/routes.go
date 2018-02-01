@@ -24,7 +24,12 @@ func (service ForgeServices) getToken(writer http.ResponseWriter, request *http.
 
 func (service ForgeServices) getURN(writer http.ResponseWriter, request *http.Request) {
 
-	log.Printf("Received an URN request. Returning %s\n", currentURN)
+	if len(currentURN) == 0 {
+		log.Printf("Received an URN request. No working URN, redirecting to Upload section\n")
+	} else {
+		log.Printf("Received an URN request. Returning %s\n", currentURN)
+	}
+
 	writer.WriteHeader(http.StatusOK)
 	encoder := json.NewEncoder(writer)
 	encoder.Encode(struct {
