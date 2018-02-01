@@ -56,9 +56,6 @@ func TestUploadDataIntoBucket(t *testing.T) {
 		t.Fatal(err.Error())
 	}
 
-	//bearer.AccessToken = "eyJhbGciOiJIUzI1NiIsImtpZCI6Imp3dF9zeW1tZXRyaWNfa2V5In0.eyJjbGllbnRfaWQiOiJlMTMwcXRBSnNKZDMwQ1kzV3dBY0IzVFBXT05JUDFZQSIsImV4cCI6MTUxNzQ2MDQ1MSwic2NvcGUiOlsiZGF0YTpyZWFkIiwiZGF0YTp3cml0ZSIsImJ1Y2tldDpjcmVhdGUiLCJidWNrZXQ6cmVhZCIsInZpZXdhYmxlczpyZWFkIl0sImF1ZCI6Imh0dHBzOi8vYXV0b2Rlc2suY29tL2F1ZC9qd3RleHA2MCIsImp0aSI6IjZrOEVxaWhma0FHMFExMlRGYXlETHdTdkRiZ3VZa201N01QYkJZZ1A3eDFza3duNlJGRmhSZXFzaHpENFVxU0MifQ._CRyc4SdM4JPv-br9vVGkIRSXlJ1JqwJU3YAeM9gvZk"
-
-
 	objectId, err := UploadDataIntoBucket("tester.txt", data, "bucket5577006791947779410", bearer.AccessToken)
 
 	if err != nil {
