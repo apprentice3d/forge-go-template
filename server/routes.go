@@ -1,10 +1,10 @@
 package server
 
 import (
-	"log"
-	"net/http"
 	"encoding/json"
 	"io/ioutil"
+	"log"
+	"net/http"
 )
 
 var currentURN string
@@ -43,14 +43,14 @@ func (service *ForgeServices) uploadFiles(writer http.ResponseWriter, request *h
 	defer request.Body.Close()
 
 	if err != nil {
-		writer.WriteHeader(http.StatusInternalServerError);
+		writer.WriteHeader(http.StatusInternalServerError)
 		writer.Write([]byte("Could not read the body"))
 		return
 	}
 
 	headerData := request.Header["Filename"]
 	if len(headerData) == 0 {
-		writer.WriteHeader(http.StatusInternalServerError);
+		writer.WriteHeader(http.StatusInternalServerError)
 		writer.Write([]byte("Could not retrieve filename"))
 		return
 	}
@@ -60,7 +60,7 @@ func (service *ForgeServices) uploadFiles(writer http.ResponseWriter, request *h
 	bearer, err := service.oauth.Authenticate("data:read data:write bucket:create bucket:read viewables:read")
 
 	if err != nil {
-		writer.WriteHeader(http.StatusInternalServerError);
+		writer.WriteHeader(http.StatusInternalServerError)
 		writer.Write([]byte("Could not acquire a token"))
 		return
 	}
@@ -69,7 +69,7 @@ func (service *ForgeServices) uploadFiles(writer http.ResponseWriter, request *h
 
 	if err != nil {
 		log.Printf("UPLOAD_N_CONVERT failed with error: %s\n", err)
-		writer.WriteHeader(http.StatusInternalServerError);
+		writer.WriteHeader(http.StatusInternalServerError)
 		writer.Write([]byte(err.Error()))
 		return
 	}

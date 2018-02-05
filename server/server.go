@@ -12,7 +12,7 @@ import (
 func StartServer(port string) {
 
 	service := ForgeServices{
-		oauth:setupForgeOAuth(),
+		oauth: setupForgeOAuth(),
 	}
 
 	//serving static files
@@ -24,17 +24,11 @@ func StartServer(port string) {
 	http.HandleFunc("/geturn", service.getURN)
 	http.HandleFunc("/upload", service.uploadFiles)
 
-
-
-
-
-
-	log.Printf("Serving on port %s\n\n ",port)
+	log.Printf("Serving on port %s\n\n ", port)
 	if err := http.ListenAndServe(port, nil); err != nil {
 		log.Fatalln(err.Error())
 	}
 }
-
 
 func setupForgeOAuth() oauth.AuthApi {
 	clientID := os.Getenv("FORGE_CLIENT_ID")
@@ -43,7 +37,7 @@ func setupForgeOAuth() oauth.AuthApi {
 	if len(clientID) == 0 || len(clientSecret) == 0 {
 		log.Fatal("The FORGE_CLIENT_ID and FORGE_CLIENT_SECRET env vars are not set. \nExiting ...")
 	}
-	
+
 	log.Printf("Starting app with FORGE_CLIENT_ID = %s\n", clientID)
 	return oauth.NewTwoLeggedClient(clientID, clientSecret)
 }
