@@ -1,88 +1,94 @@
-var viewerApp;
-var viewer = null;
-var tree = null;
-var options = {
-    env: 'AutodeskProduction',
-    getAccessToken: function (onGetAccessToken) {
-        var token_fetcher = '/gettoken';
-        var xmlHttp = new XMLHttpRequest();
-        xmlHttp.open("GET", token_fetcher, false);
-        xmlHttp.send(null);
-        var data = JSON.parse(xmlHttp.responseText);
-        var accessToken = data["access_token"];
-        var expireTimeSeconds = data["expires_in"];
+let viewer;
 
-
-        console.log("received token: " + accessToken);
-
-        onGetAccessToken(accessToken, expireTimeSeconds);
-    }
-
+let errorCodes = {
+    1: 'An unknown failure has occurred.',
+    2: 'Bad data (corrupted or malformed) was encountered.',
+    3: 'A network failure was encountered.',
+    4: 'Access was denied to a network resource (HTTP 403)',
+    5: 'A network resource could not be found (HTTP 404)',
+    6: 'A server error was returned when accessing a network resource (HTTP 5xx)',
+    7: 'An unhandled response code was returned when accessing a network resource (HTTP "everything else")',
+    8: 'Browser error: webGL is not supported by the current browser',
+    9: 'There is nothing viewable in the fetched document',
+    10: 'Browser error: webGL is supported, but not enabled',
+    11: 'There is no geomtry in loaded model',
+    12: 'Collaboration server error'
 };
 
-function getRecentURN() {
-    var urn_fetcher = '/geturn';
-    var xmlHttp = new XMLHttpRequest();
-    xmlHttp.open("GET", urn_fetcher, false);
-    xmlHttp.send(null);
-    var data = JSON.parse(xmlHttp.responseText);
-    var urn = data["urn"]
-    console.log("Received from server the following urn: " + urn + "of length " + urn.length);
-    if ( urn.length === 0) {window.location.replace('/upload.html');}
-    return "urn:" + urn;
-}
+
+fetch("/gettoken")
+    .then(res => res.json())
+    .then(result => {
+        let token = result["access_token"];
+        let options = {
+            env: 'AutodeskProduction',
+            accessToken: token
+        };
+        Autodesk.Viewing.Initializer(options, function onInitialized() {
+
+            fetch("/geturn")
+                .then(res => res.json())
+                .then(result => {
+                    let documentId = 'urn:' + result["urn"];
+                    // documentId = "urn:dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6YnVja2V0Mzk0MjMzOTQzNDU3ODE0OTYzNi9IVzIucnZ0";
+                    Autodesk.Viewing.Document.load(documentId, onDocumentLoadSuccess, onDocumentLoadFailure);
+                })
+                .catch(error => console.log("Could not fetch URN: ",error))
+        });
+    })
+    .catch(error => console.log("Could not fetch token: ", error));
 
 
-var documentId = getRecentURN();
-
-Autodesk.Viewing.Initializer(options, function onInitialized() {
-    console.log("Using the following URN: " + documentId);
-    viewerApp = new Autodesk.Viewing.ViewingApplication('viewerDiv');
-    viewerApp.registerViewer(viewerApp.k3D, Autodesk.Viewing.Private.GuiViewer3D);
-    viewerApp.loadDocument(documentId, onDocumentLoadSuccess, onDocumentLoadFailure);
-    viewer = viewerApp.getCurrentViewer();
-});
-
+/**
+ * Autodesk.Viewing.Document.load() success callback.
+ * Proceeds with model initialization.
+ */
 function onDocumentLoadSuccess(doc) {
 
-    // We could still make use of Document.getSubItemsWithProperties()
-    // However, when using a ViewingApplication, we have access to the **bubble** attribute,
-    // which references the root node of a graph that wraps each object from the Manifest JSON.
-    var viewables = viewerApp.bubble.search({ 'type': 'geometry' });
+    // A document contains references to 3D and 2D viewables.
+    let viewables = Autodesk.Viewing.Document.getSubItemsWithProperties(doc.getRootItem(), {'type': 'geometry'}, true);
     if (viewables.length === 0) {
         console.error('Document contains no viewables.');
         return;
     }
 
     // Choose any of the avialble viewables
-    viewerApp.selectItem(viewables[0].data, onItemLoadSuccess, onItemLoadFail);
+    let initialViewable = viewables[0];
+    let svfUrl = doc.getViewablePath(initialViewable);
+    let modelOptions = {
+        sharedPropertyDbPath: doc.getPropertyDbPath()
+    };
 
-
+    let viewerDiv = document.getElementById('viewerDiv');
+    viewer = new Autodesk.Viewing.Private.GuiViewer3D(viewerDiv);
+    viewer.start(svfUrl, modelOptions, onLoadModelSuccess, onLoadModelError);
 }
 
+/**
+ * Autodesk.Viewing.Document.load() failuire callback.
+ */
 function onDocumentLoadFailure(viewerErrorCode) {
-    console.log(documentId);
-    console.error('onDocumentLoadFailure() - errorCode:' + viewerErrorCode);
+    console.error('onDocumentLoadFailure() - errorCode:'
+        + viewerErrorCode
+        + " ==> "
+        + errorCodes[viewerErrorCode]);
 }
 
-function onItemLoadSuccess(reported_viewer, item) {
-
-    viewer = reported_viewer;
-    viewer.addEventListener(Autodesk.Viewing.OBJECT_TREE_CREATED_EVENT, setupMyModel);
+/**
+ * viewer.loadModel() success callback.
+ * Invoked after the model's SVF has been initially loaded.
+ * It may trigger before any geometry has been downloaded and displayed on-screen.
+ */
+function onLoadModelSuccess(model) {
+    console.log('onLoadModelSuccess()!');
+    console.log('Validate model loaded: ' + (viewer.model === model));
+    console.log(model);
 }
 
-function onItemLoadFail(errorCode) {
-    console.error('onItemLoadFail() - errorCode:' + errorCode);
-}
-
-
-
-function setupMyModel() {
-    /*============================ CUSTOMIZE MODEL HERE =======================*/
-
-    tree = viewer.model.getData().instanceTree;
-
-
-    /*============================ END OF CUSTOMIZATION =======================*/
-
+/**
+ * viewer.loadModel() failure callback.
+ * Invoked when there's an error fetching the SVF file.
+ */
+function onLoadModelError(viewerErrorCode) {
+    console.error('onLoadModelError() - errorCode:' + viewerErrorCode);
 }
