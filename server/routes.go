@@ -27,7 +27,7 @@ func (service ForgeServices) getURN(writer http.ResponseWriter, request *http.Re
 	if len(currentURN) == 0 {
 		log.Printf("Received an URN request. No working URN, redirecting to Upload section\n")
 	} else {
-		log.Printf("Received an URN request. Returning %s\n", currentURN)
+		log.Printf("Received an URN request. Returning %s\n", trimIdentifier(currentURN))
 	}
 
 	writer.WriteHeader(http.StatusOK)
@@ -73,7 +73,7 @@ func (service *ForgeServices) uploadFiles(writer http.ResponseWriter, request *h
 		writer.Write([]byte(err.Error()))
 		return
 	}
-	log.Printf("Translation was successful. Got URN: %s\n", urn)
+	log.Printf("Translation was successful. Got URN: %s\n", trimIdentifier(urn))
 
 	currentURN = urn
 	log.Printf("Setting current URN to: %s\n", currentURN)

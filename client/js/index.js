@@ -29,7 +29,12 @@ fetch("/gettoken")
             fetch("/geturn")
                 .then(res => res.json())
                 .then(result => {
-                    let documentId = 'urn:' + result["urn"];
+                    let urn = result["urn"];
+                    if ( urn.length === 0) {
+                        window.location.replace('/upload.html');
+                        return;
+                    }
+                    let documentId = 'urn:' + urn;
                     // documentId = "urn:dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6YnVja2V0Mzk0MjMzOTQzNDU3ODE0OTYzNi9IVzIucnZ0";
                     Autodesk.Viewing.Document.load(documentId, onDocumentLoadSuccess, onDocumentLoadFailure);
                 })

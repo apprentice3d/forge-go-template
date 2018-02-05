@@ -40,7 +40,7 @@ func UploadAndConvert(filename string, data []byte, token string) (urn string, e
 		if err != nil || progress == "complete" || counter < 0 {
 			return urn, err
 		}
-		log.Printf("Translation for URN=%s not yet complete. [Will retry in 10 sec]", urn)
+		log.Printf("Translation for URN=%s not yet complete. [Will retry in 10 sec]", trimIdentifier(urn))
 		time.Sleep(10 * time.Second)
 		counter--
 	}
@@ -140,7 +140,7 @@ func UploadDataIntoBucket(filename string, data []byte, bucketKey string, token 
 	}
 
 	objectID = response.ObjectID
-	log.Printf("File '%s' was successfully uploaded into bucket '%s' and now has ID: %s\n",
+	log.Printf("File '%s' was successfully uploaded into bucket '%s'\n\t\t\t and now has ID: %s\n",
 		filename, bucketKey, objectID)
 	return
 }
@@ -235,11 +235,23 @@ func CheckTranslationProgress(urn string, token string) (progress string, err er
 
 	progress = response.Progress
 	log.Printf("Checked translation status for URN=%s ==> %s\n",
-		urn, progress)
+		trimIdentifier(urn), progress)
 
-	if response.Progress == "failed" {
-		err = errors.New("Translation FAILED for URN=" + urn)
+	if response.Status == "failed" {
+		err = errors.New("Translation FAILED for URN=" + trimIdentifier(urn))
+
 	}
 	return
 
+}
+
+
+
+func trimIdentifier(identifier string) (result string) {
+	if len(identifier) > 10 {
+		result = identifier[:5] + "..." + identifier[len(identifier)-5:]
+	} else {
+		result = identifier
+	}
+	return
 }
