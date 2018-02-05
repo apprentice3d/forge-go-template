@@ -17,9 +17,9 @@ script:
 - cp -R ./client/ ./bin/linux/client
 - cp -R ./client/ ./bin/windows/client
 - cp -R ./client/ ./bin/osx/client
-- zip -r linux.zip ./bin/linux/
-- zip -r windows.zip ./bin/windows/
-- zip -r osx.zip ./bin/osx/
+- cd ./bin/linux && zip -r linux.zip .
+- cd ./bin/windows && zip -r windows.zip .
+- cd ./bin/osx && zip -r osx.zip .
 deploy:
   provider: releases
   skip_cleanup: true
