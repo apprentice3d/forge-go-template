@@ -1,0 +1,36 @@
+language: go
+go:
+- 1.9.2
+install: true
+notifications:
+  email: false
+before_script:
+- GO_FILES=$(find . -iname '*.go' -type f | grep -v /vendor/)
+- go get github.com/golang/lint/golint
+#- go get github.com/apprentice3d/forge-api-go-client
+script:
+- test -z $(gofmt -s -l $GO_FILES)
+- go vet ./...
+- golint -set_exit_status $(go list ./...)
+- env GOOS=linux GOARCH=amd64 go build -v -o ./bin/linux/forge-go-template
+- env GOOS=windows GOARCH=amd64 go build -v -o ./bin/windows/forge-go-template.exe
+- env GOOS=darwin GOARCH=amd64 go build -v -o ./bin/osx/forge-go-template
+- cp -R ./client/ ./bin/linux/clinet
+- cp -R ./client/ ./bin/windows/clinet
+- cp -R ./client/ ./bin/osx/clinet
+- zip linux.zip ./bin/linux
+- zip windows.zip ./bin/windows
+- zip osx.zip ./bin/osx
+
+deploy:
+  provider: releases
+  skip_cleanup: true
+  api_key:
+    secure: pTLhVYflSJUudFjKhedLqRUdHjrzUmutViJ+w9oDXUdhqt3Ph2tJTNKEiIdARi7sRYjUnvL2fXE9XwskaLlGI7T/r1ctlR73dD80jFwN6g0o++XT9klqaF4Mu33OVthcsgkkONeUJ6ovJJ9nYx8IeM6PbFr+AT4qFZt6/6g8L8GWL80oX+DouFqirLMRxnghZ2xQCCB4mYBLj75kx/zcMhMYiU05ZFBGyJivbr4CMF2OAF4khbrwVmZ9c43x2uMhX+/aTOCj1w5It8LBQUy6h9ynvqU0I6Mrd7lmOMExmvbPv0vs7x02CkZoOhzxxRxOzghNEJVBHSihlx+d1CyyM8LGDU7P1BCMDXNi4DqqV+61bp1vqxdBxqDrW9igFrhMAMsb7lSZ7gGhrUIxVUr9JzerbCTZXj3jFlqK5Vn/get2ZYkoQ/QQQFo3ODBo89iGY3VU+f+nkr7lNWz46p+kokgFgf5oR7Zn/miLqebSqdIksvvzkFQMYF1rVUJjhD5OSj8BXqEOa0mhxHPJR1ZhHCvWZXnp83bI2L29OdMfci7U61pcrsiTQM8UUg+Sq19AOsA+ZG6VVJG8Ho1FXRm1OI4emKB3gYa4AVChB6SWNBVCw2xQwqvY9N0M6yo0SyQb6zZYP9OTeWIfwT0di1Nu1RNLxYhKIDx76ZMLV6b7xLs=
+  file:
+  - linux.zip
+  - windows.zip
+  - osx.zip
+  on:
+    tags: true
+    repo: apprentice3d/forge-go-template
