@@ -1,10 +1,10 @@
 package server
 
 import (
-	"testing"
-	"os"
 	oauth2 "github.com/apprentice3d/forge-api-go-client/oauth"
 	"io/ioutil"
+	"os"
+	"testing"
 )
 
 func TestCreateTransientBucket(t *testing.T) {
@@ -12,7 +12,7 @@ func TestCreateTransientBucket(t *testing.T) {
 	clientID := os.Getenv("FORGE_CLIENT_ID")
 	clientSecret := os.Getenv("FORGE_CLIENT_SECRET")
 
-	oauth := oauth2.NewTwoLeggedClient(clientID,clientSecret)
+	oauth := oauth2.NewTwoLeggedClient(clientID, clientSecret)
 
 	bearer, err := oauth.Authenticate("data:read data:write bucket:create bucket:read viewables:read")
 
@@ -31,13 +31,12 @@ func TestCreateTransientBucket(t *testing.T) {
 	}
 }
 
-
 func TestUploadDataIntoBucket(t *testing.T) {
 	// prepare the credentials
 	clientID := os.Getenv("FORGE_CLIENT_ID")
 	clientSecret := os.Getenv("FORGE_CLIENT_SECRET")
 
-	oauth := oauth2.NewTwoLeggedClient(clientID,clientSecret)
+	oauth := oauth2.NewTwoLeggedClient(clientID, clientSecret)
 
 	bearer, err := oauth.Authenticate("data:write")
 
@@ -56,26 +55,24 @@ func TestUploadDataIntoBucket(t *testing.T) {
 		t.Fatal(err.Error())
 	}
 
-	objectId, err := UploadDataIntoBucket("tester.txt", data, "bucket5577006791947779410", bearer.AccessToken)
+	objectID, err := UploadDataIntoBucket("tester.txt", data, "bucket5577006791947779410", bearer.AccessToken)
 
 	if err != nil {
 		t.Fatal(err.Error())
 	}
 
-	if len(objectId) == 0 {
+	if len(objectID) == 0 {
 		t.Fatal("ObjectId is empty")
 	}
 
-
 }
-
 
 func TestTranslateSourceToSVF(t *testing.T) {
 	// prepare the credentials
 	clientID := os.Getenv("FORGE_CLIENT_ID")
 	clientSecret := os.Getenv("FORGE_CLIENT_SECRET")
 
-	oauth := oauth2.NewTwoLeggedClient(clientID,clientSecret)
+	oauth := oauth2.NewTwoLeggedClient(clientID, clientSecret)
 
 	bearer, err := oauth.Authenticate("data:read data:write bucket:create bucket:read viewables:read")
 
@@ -95,4 +92,3 @@ func TestTranslateSourceToSVF(t *testing.T) {
 	}
 
 }
-

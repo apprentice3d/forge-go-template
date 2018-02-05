@@ -1,15 +1,15 @@
 package server
 
 import (
-	"strconv"
-	"math/rand"
-	"net/http"
-	"encoding/json"
 	"bytes"
+	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"io/ioutil"
-	"encoding/base64"
 	"log"
+	"math/rand"
+	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -26,12 +26,12 @@ func UploadAndConvert(filename string, data []byte, token string) (urn string, e
 	}
 
 	log.Printf("Uploading file '%s' into bucket '%s'\n", filename, bucketKey)
-	objectId, err := UploadDataIntoBucket(filename, data, bucketKey, token)
+	objectID, err := UploadDataIntoBucket(filename, data, bucketKey, token)
 	if err != nil {
 		return
 	}
-	log.Printf("Request object '%s' to be translated into SVF\n", objectId)
-	urn, err = TranslateSourceToSVF(objectId, token)
+	log.Printf("Request object '%s' to be translated into SVF\n", objectID)
+	urn, err = TranslateSourceToSVF(objectID, token)
 
 	//Checking the translation progress but not more than 360 times with interval of 10 sec => approx 1 hour
 	counter := 359
@@ -42,17 +42,15 @@ func UploadAndConvert(filename string, data []byte, token string) (urn string, e
 		}
 		log.Printf("Translation for URN=%s not yet complete. [Will retry in 10 sec]", urn)
 		time.Sleep(10 * time.Second)
-		counter -= 1
+		counter--
 	}
-
-	return
 }
 
 // TranslateSourceToSVF takes care of base64 conversion of objectID and returns the URN
 // for which translation was started
-func TranslateSourceToSVF(objectId string, token string) (urn string, err error) {
+func TranslateSourceToSVF(objectID string, token string) (urn string, err error) {
 
-	base64urn := base64.RawStdEncoding.EncodeToString([]byte(objectId))
+	base64urn := base64.RawStdEncoding.EncodeToString([]byte(objectID))
 
 	params := TranslationParams{}
 	params.Input.URN = base64urn
@@ -80,11 +78,10 @@ func TranslateSourceToSVF(objectId string, token string) (urn string, err error)
 	req.Header.Add("Authorization", "Bearer "+token)
 
 	res, err := http.DefaultClient.Do(req)
-	defer res.Body.Close()
-
 	if err != nil {
 		return
 	}
+	defer res.Body.Close()
 
 	if res.StatusCode != http.StatusCreated && res.StatusCode != http.StatusOK {
 		data, _ := ioutil.ReadAll(res.Body)
@@ -103,13 +100,13 @@ func TranslateSourceToSVF(objectId string, token string) (urn string, err error)
 
 	urn = response.URN
 	log.Printf("Object '%s' was successfully sent for translation\n",
-		objectId)
+		objectID)
 	return
 
 }
 
 // UploadDataIntoBucket is responsible for uploading the received file into given bucket
-func UploadDataIntoBucket(filename string, data []byte, bucketKey string, token string) (objectId string, err error) {
+func UploadDataIntoBucket(filename string, data []byte, bucketKey string, token string) (objectID string, err error) {
 
 	url := "https://developer.api.autodesk.com/oss/v2/buckets/" + bucketKey + "/objects/" + filename
 
@@ -123,11 +120,10 @@ func UploadDataIntoBucket(filename string, data []byte, bucketKey string, token 
 	req.Header.Add("Authorization", "Bearer "+token)
 
 	res, err := http.DefaultClient.Do(req)
-	defer res.Body.Close()
-
 	if err != nil {
 		return
 	}
+	defer res.Body.Close()
 
 	if res.StatusCode != http.StatusOK {
 		data, _ := ioutil.ReadAll(res.Body)
@@ -143,9 +139,9 @@ func UploadDataIntoBucket(filename string, data []byte, bucketKey string, token 
 		return "", errors.New("Could not unmarshal upload response: " + err.Error())
 	}
 
-	objectId = response.ObjectID
+	objectID = response.ObjectID
 	log.Printf("File '%s' was successfully uploaded into bucket '%s' and now has ID: %s\n",
-		filename, bucketKey, objectId)
+		filename, bucketKey, objectID)
 	return
 }
 
@@ -173,15 +169,14 @@ func CreateTransientBucket(bucketName string, token string) (bucketKey string, e
 	req.Header.Add("Authorization", "Bearer "+token)
 
 	res, err := http.DefaultClient.Do(req)
-	defer res.Body.Close()
-
 	if err != nil {
 		return
 	}
+	defer res.Body.Close()
 
 	if res.StatusCode == http.StatusConflict {
 		// Bucket already exists
-		log.Printf("Bucket '%s' already exist, writting into it\n", bucketName)
+		log.Printf("Bucket '%s' already exist, writing into it\n", bucketName)
 		return bucketName, nil
 	}
 
@@ -198,7 +193,6 @@ func CreateTransientBucket(bucketName string, token string) (bucketKey string, e
 	log.Printf("Bucket '%s' successfully created\n", bucketKey)
 	return
 }
-
 
 // CheckTranslationProgress will check the status of the work and will return progress either "complete"
 // or as percent value
@@ -219,12 +213,11 @@ func CheckTranslationProgress(urn string, token string) (progress string, err er
 	req.Header.Add("Authorization", "Bearer "+token)
 
 	res, err := http.DefaultClient.Do(req)
-
-	defer res.Body.Close()
 	if err != nil {
 
 		return
 	}
+	defer res.Body.Close()
 
 	if res.StatusCode != http.StatusOK {
 		data, _ := ioutil.ReadAll(res.Body)
