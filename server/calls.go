@@ -245,8 +245,6 @@ func CheckTranslationProgress(urn string, token string) (progress string, err er
 
 }
 
-
-
 func trimIdentifier(identifier string) (result string) {
 	if len(identifier) > 10 {
 		result = identifier[:5] + "..." + identifier[len(identifier)-5:]

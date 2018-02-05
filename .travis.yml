@@ -18,17 +18,18 @@ script:
 - cp -R ./client/ ./bin/windows/client
 - cp -R ./client/ ./bin/osx/client
 - cd ./bin/linux && zip -r linux.zip .
-- cd ./bin/windows && zip -r windows.zip .
-- cd ./bin/osx && zip -r osx.zip .
+- cd ../../bin/windows && zip -r windows.zip .
+- cd ../../bin/osx && zip -r osx.zip .
+- cd ../..
 deploy:
   provider: releases
   skip_cleanup: true
   api_key:
     secure: iQbCAM8H+OQnF2gv9TOwVlqv8Q6xoeoQShr9W+x9vi4lkDi4gQf6ClN9DQnXHUXOfqgS75grIZKDOHcbIsaOcQDDKgr5+nUhc7Xe26yLllmG4sW9VLAB5JJqGJC0YYDLvfQIwzNpY+NdBj4Ezj2oTDMZlaZYV/pemM4J4wVPCf31eM87ughTv+cpGiaqgVE0vcLq/h5kQJcwGLOZx5kRNHu+R4GSXmIKqASFGjaq5MDZo8PGcZIDg2cYhtjUnnI+WOb79AQwTycVWkB0/8eMwOoU7ZMvBU4xrf4iBe8kq1Zcuro+R48re3BQWx4QzhOkKTjh+hHf5w7urseqzdG1zA26AARjgJcTFF906FhtCYgZuumKa3743vqkWTB3JRm+QxGJfkls8iwdPDoSDtmqvM2AxL9d2ObJNMzVR6Xm202uNgH6DeY539+cPRWdJw/C6JiWrWYzKZF1RBNCiIuYYBvBuWijriQB5G1aqk1GtvqbNvA55nNh5GFJzNluQzCg1w7t/bBESeWqqo1+MLcyqIcjukJOuouXX6cISVaCmpG0DcSoKFB6ItXeqVXX/gJJO1IuLG32VymkYq+kwk0xNdP6yIebqIExhR5k9fbaelobr7NmR8V9c6vlssfQ7igVWDkaK6L9aFWn5E0E5UqodKxtvSIFhUZ/H3fChrWRQjw=
   file:
-  - linux.zip
-  - windows.zip
-  - osx.zip
+  - ./bin/linux/linux.zip
+  - ./bin/windows/windows.zip
+  - ./bin/osx/osx.zip
   on:
     tags: true
     repo: apprentice3d/forge-go-template
