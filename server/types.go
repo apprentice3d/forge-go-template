@@ -13,17 +13,7 @@ type BucketParams struct {
 	PolicyKey string `json:"policyKey"`
 }
 
-type TranslationParams struct {
-	Input struct {
-		URN string `json:"urn"`
-	} `json:"input"`
-	Output struct {
-		Formats []struct {
-			Type  string   `json:"type"`
-			Views []string `json:"views"`
-		} `json:"formats"`
-	} `json:"output"`
-}
+
 
 type TranslationResponse struct {
 	Result string `json:"result"`
@@ -60,6 +50,44 @@ type TranslationStatusResponse struct {
 	URN string		`json:"urn"`
 	Version string	`json:"version"`
 }
+
+
+type TranslationParams struct {
+	Input struct {
+		URN string `json:"urn"`
+	} `json:"input"`
+	Output struct {
+		Formats []Format `json:"formats"`
+	} `json:"output"`
+}
+
+type Format struct {
+	Type  string   `json:"type"`
+	Views []string `json:"views"`
+}
+
+
+
+
+
+/*
+
+`{
+  "input": {
+    "urn": "dXJuOmFkc2sub2JqZWN0czpvcy5vYmplY3Q6c29tZV90ZW1wX2J1Y2tldC9jZWFzaWsuZjNk"
+  },
+  "output": {
+    "formats": [{
+      "type": "svf",
+      "views": [
+        "2d",
+        "3d"
+        ]
+    }]
+  }
+}`
+*/
+
 
 
 

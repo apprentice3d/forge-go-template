@@ -7,13 +7,13 @@ import (
 	"encoding/json"
 	"bytes"
 	"errors"
-	"mime/multipart"
 	"io/ioutil"
 	"encoding/base64"
 	"log"
 	"time"
 )
 
+// UploadAndConvert takes cares of file uploading and translation, given the file and access token
 func UploadAndConvert(filename string, data []byte, token string) (urn string, err error) {
 
 	rand.Seed(time.Now().UTC().UnixNano())
@@ -33,7 +33,6 @@ func UploadAndConvert(filename string, data []byte, token string) (urn string, e
 	log.Printf("Request object '%s' to be translated into SVF\n", objectId)
 	urn, err = TranslateSourceToSVF(objectId, token)
 
-
 	//Checking the translation progress but not more than 360 times with interval of 10 sec => approx 1 hour
 	counter := 359
 	for {
@@ -42,42 +41,36 @@ func UploadAndConvert(filename string, data []byte, token string) (urn string, e
 			return urn, err
 		}
 		log.Printf("Translation for URN=%s not yet complete. [Will retry in 10 sec]", urn)
-		time.Sleep(10*time.Second)
+		time.Sleep(10 * time.Second)
 		counter -= 1
 	}
-
-
 
 	return
 }
 
-
+// TranslateSourceToSVF takes care of base64 conversion of objectID and returns the URN
+// for which translation was started
 func TranslateSourceToSVF(objectId string, token string) (urn string, err error) {
 
 	base64urn := base64.RawStdEncoding.EncodeToString([]byte(objectId))
 
-	//TODO: replace hardcodings with TranslationParams struct
-	var params = []byte(`{
-  "input": {
-    "urn": "`)
-	params = append(params, []byte(base64urn)...)
+	params := TranslationParams{}
+	params.Input.URN = base64urn
+	format := Format{
+		Type:  "svf",
+		Views: []string{"2d", "3d"},
+	}
+	params.Output.Formats = []Format{format}
 
-	params = append(params, []byte(`"
-  },
-  "output": {
-    "formats": [{
-      "type": "svf",
-      "views": [
-        "2d",
-        "3d"
-        ]
-    }]
-  }
-}`)...)
+	byteParams, err := json.Marshal(params)
+	if err != nil {
+		log.Println("Could not marshal the translation parameters")
+		return
+	}
 
 	req, err := http.NewRequest("POST",
 		"https://developer.api.autodesk.com/modelderivative/v2/designdata/job",
-		bytes.NewBuffer(params))
+		bytes.NewBuffer(byteParams))
 
 	if err != nil {
 		return
@@ -115,19 +108,12 @@ func TranslateSourceToSVF(objectId string, token string) (urn string, err error)
 
 }
 
+// UploadDataIntoBucket is responsible for uploading the received file into given bucket
 func UploadDataIntoBucket(filename string, data []byte, bucketKey string, token string) (objectId string, err error) {
 
-	bodyBuffer := &bytes.Buffer{}
-	bodyWriter := multipart.NewWriter(bodyBuffer)
-	fileWriter, err := bodyWriter.CreateFormFile("uploadfile", filename)
-	if err != nil {
-		return
-	}
-	fileWriter.Write(data)
+	url := "https://developer.api.autodesk.com/oss/v2/buckets/" + bucketKey + "/objects/" + filename
 
-	url := "https://developer.api.autodesk.com/oss/v2/buckets/"+bucketKey+"/objects/" + filename
-
-	req, err := http.NewRequest("PUT", url, bodyBuffer)
+	req, err := http.NewRequest("PUT", url, bytes.NewBuffer(data))
 
 	if err != nil {
 		return
@@ -163,6 +149,7 @@ func UploadDataIntoBucket(filename string, data []byte, bucketKey string, token 
 	return
 }
 
+// CreateTransientBucket is responsible for creation of a transient bucket given the bucket name
 func CreateTransientBucket(bucketName string, token string) (bucketKey string, err error) {
 	params := BucketParams{
 		bucketName,
@@ -213,9 +200,9 @@ func CreateTransientBucket(bucketName string, token string) (bucketKey string, e
 }
 
 
-
-
-func CheckTranslationProgress(urn string, token string) (progress string, err error){
+// CheckTranslationProgress will check the status of the work and will return progress either "complete"
+// or as percent value
+func CheckTranslationProgress(urn string, token string) (progress string, err error) {
 
 	url := "https://developer.api.autodesk.com/modelderivative/v2/designdata/" +
 		urn + "/manifest"
@@ -250,13 +237,16 @@ func CheckTranslationProgress(urn string, token string) (progress string, err er
 	err = decoder.Decode(&response)
 
 	if err != nil {
-		return "",errors.New("Could not unmarshal translation progress response: " + err.Error())
+		return "", errors.New("Could not unmarshal translation progress response: " + err.Error())
 	}
 
 	progress = response.Progress
 	log.Printf("Checked translation status for URN=%s ==> %s\n",
 		urn, progress)
-	return
 
+	if response.Progress == "failed" {
+		err = errors.New("Translation FAILED for URN=" + urn)
+	}
+	return
 
 }
