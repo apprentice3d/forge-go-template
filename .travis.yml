@@ -7,7 +7,6 @@ notifications:
 before_script:
 - GO_FILES=$(find . -iname '*.go' -type f | grep -v /vendor/)
 - go get github.com/golang/lint/golint
-#- go get github.com/apprentice3d/forge-api-go-client
 script:
 - test -z $(gofmt -s -l $GO_FILES)
 - go vet ./...
@@ -21,12 +20,11 @@ script:
 - zip linux.zip ./bin/linux
 - zip windows.zip ./bin/windows
 - zip osx.zip ./bin/osx
-
 deploy:
   provider: releases
   skip_cleanup: true
   api_key:
-    secure: pTLhVYflSJUudFjKhedLqRUdHjrzUmutViJ+w9oDXUdhqt3Ph2tJTNKEiIdARi7sRYjUnvL2fXE9XwskaLlGI7T/r1ctlR73dD80jFwN6g0o++XT9klqaF4Mu33OVthcsgkkONeUJ6ovJJ9nYx8IeM6PbFr+AT4qFZt6/6g8L8GWL80oX+DouFqirLMRxnghZ2xQCCB4mYBLj75kx/zcMhMYiU05ZFBGyJivbr4CMF2OAF4khbrwVmZ9c43x2uMhX+/aTOCj1w5It8LBQUy6h9ynvqU0I6Mrd7lmOMExmvbPv0vs7x02CkZoOhzxxRxOzghNEJVBHSihlx+d1CyyM8LGDU7P1BCMDXNi4DqqV+61bp1vqxdBxqDrW9igFrhMAMsb7lSZ7gGhrUIxVUr9JzerbCTZXj3jFlqK5Vn/get2ZYkoQ/QQQFo3ODBo89iGY3VU+f+nkr7lNWz46p+kokgFgf5oR7Zn/miLqebSqdIksvvzkFQMYF1rVUJjhD5OSj8BXqEOa0mhxHPJR1ZhHCvWZXnp83bI2L29OdMfci7U61pcrsiTQM8UUg+Sq19AOsA+ZG6VVJG8Ho1FXRm1OI4emKB3gYa4AVChB6SWNBVCw2xQwqvY9N0M6yo0SyQb6zZYP9OTeWIfwT0di1Nu1RNLxYhKIDx76ZMLV6b7xLs=
+    secure: iQbCAM8H+OQnF2gv9TOwVlqv8Q6xoeoQShr9W+x9vi4lkDi4gQf6ClN9DQnXHUXOfqgS75grIZKDOHcbIsaOcQDDKgr5+nUhc7Xe26yLllmG4sW9VLAB5JJqGJC0YYDLvfQIwzNpY+NdBj4Ezj2oTDMZlaZYV/pemM4J4wVPCf31eM87ughTv+cpGiaqgVE0vcLq/h5kQJcwGLOZx5kRNHu+R4GSXmIKqASFGjaq5MDZo8PGcZIDg2cYhtjUnnI+WOb79AQwTycVWkB0/8eMwOoU7ZMvBU4xrf4iBe8kq1Zcuro+R48re3BQWx4QzhOkKTjh+hHf5w7urseqzdG1zA26AARjgJcTFF906FhtCYgZuumKa3743vqkWTB3JRm+QxGJfkls8iwdPDoSDtmqvM2AxL9d2ObJNMzVR6Xm202uNgH6DeY539+cPRWdJw/C6JiWrWYzKZF1RBNCiIuYYBvBuWijriQB5G1aqk1GtvqbNvA55nNh5GFJzNluQzCg1w7t/bBESeWqqo1+MLcyqIcjukJOuouXX6cISVaCmpG0DcSoKFB6ItXeqVXX/gJJO1IuLG32VymkYq+kwk0xNdP6yIebqIExhR5k9fbaelobr7NmR8V9c6vlssfQ7igVWDkaK6L9aFWn5E0E5UqodKxtvSIFhUZ/H3fChrWRQjw=
   file:
   - linux.zip
   - windows.zip
