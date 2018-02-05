@@ -17,9 +17,9 @@ script:
 - cp -R ./client/ ./bin/linux/clinet
 - cp -R ./client/ ./bin/windows/clinet
 - cp -R ./client/ ./bin/osx/clinet
-- zip linux.zip ./bin/linux
-- zip windows.zip ./bin/windows
-- zip osx.zip ./bin/osx
+- zip linux.zip ./bin/linux/
+- zip windows.zip ./bin/windows/
+- zip osx.zip ./bin/osx/
 deploy:
   provider: releases
   skip_cleanup: true
