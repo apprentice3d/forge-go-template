@@ -14,12 +14,12 @@ script:
 - env GOOS=linux GOARCH=amd64 go build -v -o ./bin/linux/forge-go-template
 - env GOOS=windows GOARCH=amd64 go build -v -o ./bin/windows/forge-go-template.exe
 - env GOOS=darwin GOARCH=amd64 go build -v -o ./bin/osx/forge-go-template
-- cp -R ./client/ ./bin/linux/clinet
-- cp -R ./client/ ./bin/windows/clinet
-- cp -R ./client/ ./bin/osx/clinet
-- zip linux.zip ./bin/linux/
-- zip windows.zip ./bin/windows/
-- zip osx.zip ./bin/osx/
+- cp -R ./client/ ./bin/linux/client
+- cp -R ./client/ ./bin/windows/client
+- cp -R ./client/ ./bin/osx/client
+- zip -r linux.zip ./bin/linux/
+- zip -r windows.zip ./bin/windows/
+- zip -r osx.zip ./bin/osx/
 deploy:
   provider: releases
   skip_cleanup: true
