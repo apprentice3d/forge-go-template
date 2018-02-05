@@ -176,7 +176,7 @@ func CreateTransientBucket(bucketName string, token string) (bucketKey string, e
 
 	if res.StatusCode == http.StatusConflict {
 		// Bucket already exists
-		log.Printf("Bucket '%s' already exist, writting into it\n", bucketName)
+		log.Printf("Bucket '%s' already exist, writing into it\n", bucketName)
 		return bucketName, nil
 	}
 
