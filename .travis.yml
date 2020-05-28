@@ -1,13 +1,13 @@
 language: go
 go:
-- 1.14
+- "1.14"
 install: true
 notifications:
   email: false
 before_script:
-- GO_FILES=$(find . -iname '*.go' -type f | grep -v /vendor/)
+- GO_FILES=$(find . -iname '*.go' -type f)
 script:
-- test -z $(gofmt -s -l $GO_FILES)
+#- test -z $(gofmt -s -l $GO_FILES)
 - go vet ./...
 - env GOOS=linux GOARCH=amd64 go build -v -o ./bin/linux/forge-go-template
 - env GOOS=windows GOARCH=amd64 go build -v -o ./bin/windows/forge-go-template.exe
