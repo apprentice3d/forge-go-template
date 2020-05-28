@@ -6,11 +6,9 @@ notifications:
   email: false
 before_script:
 - GO_FILES=$(find . -iname '*.go' -type f | grep -v /vendor/)
-- go get github.com/golang/lint/golint
 script:
 - test -z $(gofmt -s -l $GO_FILES)
 - go vet ./...
-- golint -set_exit_status $(go list ./...)
 - env GOOS=linux GOARCH=amd64 go build -v -o ./bin/linux/forge-go-template
 - env GOOS=windows GOARCH=amd64 go build -v -o ./bin/windows/forge-go-template.exe
 - env GOOS=darwin GOARCH=amd64 go build -v -o ./bin/osx/forge-go-template
