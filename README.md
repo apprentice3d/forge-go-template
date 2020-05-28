@@ -18,7 +18,7 @@ Set the ```FORGE_CLIENT_ID``` and ```FORGE_CLIENT_SECRET``` environment
 variables with your Forge secrets.
 
 Grab the zip archive from the [releases](https://github.com/apprentice3d/forge-go-template/releases) page
-and un-archive it into favorite folder.
+and un-archive it into a favorite folder.
 
 If you have Go already setup, and you want to build it by yourself, run:
 
@@ -38,15 +38,16 @@ or build it by running
 
 ## Usage
 
-This app works on `port 3000`, so make sure it is available.
+This app will find an available port and startusing it.
 
 To start the app just run the `forge-go-template` executable.
 
-If everything is setup, you should see a terminal window like this:
+If everything setup, you should see a terminal window like this:
 
 ![](./doc/terminal.png)
 
-meaning that the web app can be accessed at `http://localhost:3000`
+meaning the web app can be accessed at `http://localhost:3000`, 
+but replace `3000` with the port number the app will mention.
 
 with following workflow:
 

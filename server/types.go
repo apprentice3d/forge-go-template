@@ -6,7 +6,7 @@ import (
 
 // ForgeServices holds the necessary references to Forge services
 type ForgeServices struct {
-	oauth oauth.AuthApi
+	oauth oauth.TwoLeggedAuth
 }
 
 // BucketParams struct reflects the Bucket Creation parameters
